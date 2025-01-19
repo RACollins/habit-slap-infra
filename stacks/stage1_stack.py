@@ -21,7 +21,7 @@ class Stage1Stack(Stack):
         checking_function = lambda_.Function(
             self,
             "HabitSlapCheckingFunction",
-            runtime=lambda_.Runtime.PYTHON_3_9,
+            runtime=lambda_.Runtime.PYTHON_3_13,
             handler="lambda_function.lambda_handler",
             code=lambda_.Code.from_asset("checking_function"),
             timeout=Duration.minutes(1),
