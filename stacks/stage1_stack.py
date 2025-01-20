@@ -35,7 +35,10 @@ class Stage1Stack(Stack):
         checking_function.add_to_role_policy(
             iam.PolicyStatement(
                 actions=["dynamodb:Query", "dynamodb:Scan", "dynamodb:GetItem"],
-                resources=[f"arn:aws:dynamodb:*:*:table/habit-slap-users-dev"],
+                resources=[
+                    f"arn:aws:dynamodb:*:*:table/habit-slap-users-dev",
+                    f"arn:aws:dynamodb:*:*:table/habit-slap-users-dev/index/*"
+                ],
             )
         )
 
@@ -46,6 +49,7 @@ class Stage1Stack(Stack):
         rule = events.Rule(
             self,
             "HabitSlapScheduleRule",
-            schedule=events.Schedule.rate(Duration.minutes(5)),
+            # Run at minute 0, 5, ... , 55 of every hour
+            schedule=events.Schedule.cron(minute="0/5"),
         )
         rule.add_target(targets.LambdaFunction(checking_function))
