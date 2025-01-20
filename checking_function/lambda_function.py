@@ -1,8 +1,6 @@
-import boto3
+import boto3  # type: ignore
 import os
-import datetime
-from boto3.dynamodb.conditions import Key
-from datetime import datetime
+from boto3.dynamodb.conditions import Key  # type: ignore
 
 dynamodb = boto3.resource("dynamodb")
 sqs = boto3.client("sqs")
@@ -12,17 +10,14 @@ def lambda_handler(event, context):
     table = dynamodb.Table(os.environ["TABLE_NAME"])
     queue_url = os.environ["QUEUE_URL"]
 
-    # Get time from EventBridge event
-    event_time = event["time"]
-    # EventBridge sends time in ISO format, convert to our format
-    current_time = datetime.strptime(event_time, "%Y-%m-%dT%H:%M:%SZ").strftime(
-        "%Y-%m-%d %H:%M"
-    )
+    # Get time from EventBridge event and convert format
+    current_time = event["time"].replace("Z", "+00:00")
+    print("Current time:", current_time)
 
     # Query DynamoDB using the GSI
     response = table.query(
         IndexName="NextEmailDateIndex",
-        KeyConditionExpression=Key("next_email_date").eq(current_time),
+        KeyConditionExpression=Key("next_email_date").eq(current_time)
     )
 
     # Process matching records
