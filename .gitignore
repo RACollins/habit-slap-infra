@@ -169,3 +169,17 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# CDK-specific
+cdk.out/
+cdk.context.json
+.cdk.staging/
+
+# AWS credentials and configs
+.aws/
+aws-credentials.json
+
+# Node.js (since CDK uses Node.js)
+node_modules/
+package-lock.json
+package.json
