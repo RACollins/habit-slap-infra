@@ -183,3 +183,7 @@ aws-credentials.json
 node_modules/
 package-lock.json
 package.json
+
+# AWS Lambda Layer stuff
+sending_function/lambda_layer/python/
+sending_function/lambda_layer/lambda_layer.zip
