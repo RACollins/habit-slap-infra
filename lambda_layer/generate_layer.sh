@@ -7,14 +7,12 @@ rm -f lambda_layer.zip
 # Create new python directory
 mkdir -p python
 
-# Install packages with no dependencies
-pip install --no-deps -r requirements.txt -t python/
+# Install all packages with their dependencies for x86_64 architecture
+pip install -r requirements.txt --platform manylinux2014_x86_64 --target python/ --only-binary=:all:
 
-# Install minimal dependencies manually
-pip install --no-deps charset-normalizer==3.4.1 -t python/
-pip install --no-deps idna==3.10 -t python/
-pip install --no-deps urllib3==2.3.0 -t python/
-pip install --no-deps certifi==2024.12.14 -t python/
+# Save initial size
+INITIAL_SIZE=$(du -sh python | awk '{print $1}')
+echo "Initial size before cleanup: $INITIAL_SIZE"
 
 # Remove unnecessary files to reduce size
 cd python
@@ -48,10 +46,25 @@ rm -rf */docs/
 rm -rf */.github/
 rm -rf */examples/
 
-# Go back and create zip
 cd ..
+
+# Save size after cleanup
+AFTER_CLEANUP_SIZE=$(du -sh python | awk '{print $1}')
+
+# Create zip
 zip -r lambda_layer.zip python/
 
-# Show final size
-echo "Final layer size:"
-du -h lambda_layer.zip 
+# Save final sizes
+UNZIPPED_SIZE=$(du -sh python | awk '{print $1}')
+ZIPPED_SIZE=$(du -h lambda_layer.zip | awk '{print $1}')
+
+# Delete python directory
+rm -rf python
+
+# Display all sizes at the end
+echo "=================== LAYER SIZE REPORT ==================="
+echo "Initial size before cleanup:     $INITIAL_SIZE"
+echo "Size after cleanup:             $AFTER_CLEANUP_SIZE"
+echo "Final unzipped size:            $UNZIPPED_SIZE"
+echo "Final zipped layer size:        $ZIPPED_SIZE"
+echo "========================================================="

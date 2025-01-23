@@ -135,6 +135,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.venv-sending_function
 
 # Spyder project settings
 .spyderproject
@@ -185,5 +186,5 @@ package-lock.json
 package.json
 
 # AWS Lambda Layer stuff
-sending_function/lambda_layer/python/
-sending_function/lambda_layer/lambda_layer.zip
+lambda_layer/python/
+lambda_layer/lambda_layer.zip

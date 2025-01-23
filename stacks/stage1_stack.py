@@ -68,7 +68,7 @@ class Stage1Stack(Stack):
         layer = lambda_.LayerVersion(
             self,
             "HabitSlapLayer",
-            code=lambda_.Code.from_asset("sending_function/lambda_layer"),
+            code=lambda_.Code.from_asset("lambda_layer/lambda_layer.zip"),
             compatible_runtimes=[lambda_.Runtime.PYTHON_3_13],
             description="Layer containing OpenAI, Langchain, and email dependencies"
         )
@@ -81,6 +81,7 @@ class Stage1Stack(Stack):
             handler="lambda_function.lambda_handler",
             code=lambda_.Code.from_asset("sending_function"),
             timeout=Duration.minutes(5),
+            memory_size=128,  # <- Increase memory if necessary
             layers=[layer],
             environment={
                 "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY", ""),
@@ -89,7 +90,11 @@ class Stage1Stack(Stack):
             },
         )
 
-        # Add SQS trigger to Sending Lambda
+        # Add SQS trigger to Sending Lambda with batch size 1
         sending_function.add_event_source(
-            lambda_event_sources.SqsEventSource(queue)
+            lambda_event_sources.SqsEventSource(
+                queue,
+                batch_size=1,  # Process one message at a time
+                max_batching_window=Duration.seconds(0)  # Don't wait to batch messages
+            )
         )

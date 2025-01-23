@@ -1,6 +1,6 @@
 import os
-import yagmail
-from openai import OpenAI
+import yagmail # type: ignore
+from openai import OpenAI # type: ignore
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -21,12 +21,13 @@ def generate_email(goal: str) -> str:
     Do not use any salutations or signatures - just the body text."""
 
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a motivational coach."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.7
+        temperature=0.7,
+        max_tokens=1000
     )
     
     return response.choices[0].message.content
@@ -44,7 +45,7 @@ def send_email(recipient: str, content: str):
 
 # Test the function if running this file directly
 if __name__ == "__main__":
-    goal = "I want to lose weight"
+    goal = "I just want to lose weight, fast, I'm so fat. Help me please!"
     body = generate_email(goal)
     email = "habitslaptest+user1@gmail.com"
     send_email(email, body)
