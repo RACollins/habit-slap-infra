@@ -39,7 +39,7 @@ def send_email(recipient: str, content: str):
     )
     yag.send(
         to=recipient,
-        subject="Your Daily Motivation 💪",
+        subject="Your Weekly Motivation 💪",
         contents=content
     )
 
