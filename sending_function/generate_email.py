@@ -6,40 +6,34 @@ from openai import OpenAI  # type: ignore
 from pydantic import BaseModel, Field  # type: ignore
 from typing import List
 from dotenv import load_dotenv
+from prompts.prompt_manager import PromptManager
 
 # Load environment variables from .env file
 load_dotenv()
 
-GENERAL_SYSTEM_PROMPT = """
-    You are a motivational coach who writes emails that motivate people to achieve their goals.
-    
-    The emails should be:
-    - Motivational and supportive
-    - Brief (2-3 paragraphs)
-    - Don't sugar coat your advice
-    - Include at leastone actionable tip
-    
-    Do not use any salutations or signatures - just the body text."""
-
 
 ### Define email format
-class EmailBody(BaseModel):
+class Email(BaseModel):
     subject: str = Field(description="The subject of the email")
-    previous_summary: str = Field(
-        description="A summary of the previous emails if they exist, otherwise return an empty string"
-    )
     body: str = Field(description="The body of the email")
 
 
 @ell.complex(
     model="gpt-4o-mini",
     client=OpenAI(api_key=os.getenv("OPENAI_API_KEY")),
-    temperature=1.1,
+    temperature=1.0,
     max_tokens=2000,
-    response_format=EmailBody,
+    response_format=Email,
 )
-def generate_email(goal: str, message_history: List[Message]) -> EmailBody:
-    user_prompt = f"Summarise the emails in a few sentences. Then, write a motivational email to someone who has the following goal: {goal}"
+def generate_email(goal: str, message_history: List[Message]) -> Email:
+    GENERAL_SYSTEM_PROMPT = PromptManager.get_prompt(
+        "general_system_template",
+        min_actionable_tips=1,
+        previous_email_exists=bool(message_history),
+    )
+    user_prompt = PromptManager.get_prompt(
+        "goal_template", goal=goal, previous_email_exists=bool(message_history)
+    )
     response = (
         [ell.system(GENERAL_SYSTEM_PROMPT)] + message_history + [ell.user(user_prompt)]
     )
@@ -50,16 +44,10 @@ def send_email(recipient: str, content: str):
     yag = yagmail.SMTP(
         user=os.getenv("GMAIL_USER"), password=os.getenv("GMAIL_PASSWORD")
     )
-    if content.previous_summary == "":
-        main_text = (
-            f"This is the first email on your Habit Slap journey!\n\n{content.body}"
-        )
-    else:
-        main_text = f"{content.previous_summary}\n\nHere is the next email I've written to you. I hope it helps you achieve your goal!\n\n{content.body}"
     yag.send(
         to=recipient,
         subject=f"{content.subject} 💪",
-        contents=main_text,
+        contents=content.body,
     )
 
 
