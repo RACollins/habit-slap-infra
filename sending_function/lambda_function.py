@@ -19,7 +19,7 @@ def lambda_handler(event, context):
 
             # Generate and send email
             email_content = generate_email(goal)
-            send_email(email, email_content)
+            send_email(email, email_content.parsed)
 
             # Get current record to find next_email_date
             current_record = table.get_item(Key={"email": email})

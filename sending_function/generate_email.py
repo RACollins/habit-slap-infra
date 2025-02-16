@@ -25,7 +25,7 @@ class Email(BaseModel):
     max_tokens=2000,
     response_format=Email,
 )
-def generate_email(goal: str, message_history: List[Message]) -> Email:
+def generate_email(goal: str, message_history: List[Message] = []) -> Email:
     GENERAL_SYSTEM_PROMPT = PromptManager.get_prompt(
         "general_system_template",
         min_actionable_tips=1,
