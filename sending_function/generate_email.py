@@ -1,10 +1,7 @@
 import os
 import yagmail  # type: ignore
-import ell  # type: ignore
-from ell import Message  # type: ignore
 from openai import OpenAI  # type: ignore
 from pydantic import BaseModel, Field  # type: ignore
-from typing import List
 from dotenv import load_dotenv
 from prompts.prompt_manager import PromptManager
 
@@ -18,14 +15,17 @@ class Email(BaseModel):
     body: str = Field(description="The body of the email")
 
 
-@ell.complex(
-    model="gpt-4o-mini",
-    client=OpenAI(api_key=os.getenv("OPENAI_API_KEY")),
-    temperature=1.0,
-    max_tokens=2000,
-    response_format=Email,
-)
-def generate_email(goal: str, message_history: List[Message] = []) -> Email:
+def generate_email(
+    user_name: str,
+    user_bio: str,
+    habit_details: str,
+    time_frame: str,
+    formality: int,
+    assertiveness: int,
+    intensity: int,
+) -> Email:
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    message_history = []
     GENERAL_SYSTEM_PROMPT = PromptManager.get_prompt(
         "general_system_template",
         min_actionable_tips=1,
@@ -34,10 +34,17 @@ def generate_email(goal: str, message_history: List[Message] = []) -> Email:
     user_prompt = PromptManager.get_prompt(
         "goal_template", goal=goal, previous_email_exists=bool(message_history)
     )
-    response = (
-        [ell.system(GENERAL_SYSTEM_PROMPT)] + message_history + [ell.user(user_prompt)]
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": GENERAL_SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt}
+        ],
+        temperature=0.7,
+        max_tokens=1000
     )
-    return response
+    
+    return response.choices[0].message.content
 
 
 def send_email(recipient: str, content: str):
