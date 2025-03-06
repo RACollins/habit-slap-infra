@@ -71,7 +71,7 @@ class Stage1Stack(Stack):
             "HabitSlapLayer",
             code=lambda_.Code.from_asset("lambda_layer/lambda_layer.zip"),
             compatible_runtimes=[lambda_.Runtime.PYTHON_3_13],
-            description="Layer containing OpenAI, Langchain, and email dependencies",
+            description="Layer containing OpenAI and email dependencies",
         )
 
         # Create Sending Lambda function

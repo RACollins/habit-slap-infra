@@ -23,7 +23,17 @@ def lambda_handler(event, context):
     # Process matching records
     records = response.get("Items", [])
     for record in records:
-        message = {"email": record.get("email"), "goal": record.get("goal")}
+        message = {
+            "email": record.get("email"),
+            "name": record.get("name"),
+            "bio": record.get("bio"),
+            "habit_details": record.get("habit_details"),
+            "timeframe": record.get("timeframe"),
+            "formality": record.get("formality", 50),  # Default to middle value if not set
+            "assertiveness": record.get("assertiveness", 50),
+            "intensity": record.get("intensity", 50)
+        }
         sqs.send_message(QueueUrl=queue_url, MessageBody=str(message))
+        print(f"Sent message to SQS for {record.get('email')}")
 
     return {"statusCode": 200, "body": f"Processed {len(records)} records"}

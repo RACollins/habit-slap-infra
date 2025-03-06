@@ -13,30 +13,38 @@ def lambda_handler(event, context):
     try:
         for record in event["Records"]:
             message = eval(record["body"])
-            email = message["email"]
-            goal = message["goal"]
-            print(f"Processing message for email: {email} with goal: {goal}")
+            print(
+                f"Processing message for email: {message["email"]} with habit_details: {message["habit_details"]}"
+            )
 
             # Generate and send email
-            email_content = generate_email(goal)
-            send_email(email, email_content)
+            email_object = generate_email(
+                user_name=message["name"],
+                user_bio=message["bio"],
+                habit_details=message["habit_details"],
+                time_frame=message["timeframe"],
+                formality=message["formality"],
+                assertiveness=message["assertiveness"],
+                intensity=message["intensity"],
+            )
+            send_email(message["email"], email_object.parsed)
 
             # Get current record to find next_email_date
-            current_record = table.get_item(Key={"email": email})
+            current_record = table.get_item(Key={"email": message["email"]})
             current_next_date = current_record["Item"]["next_email_date"]
 
-            # Calculate next email date (1 week from current next_email_date)
+            # Calculate next email date (1 day from current next_email_date)
             next_date = (
-                datetime.fromisoformat(current_next_date) + timedelta(days=7)
+                datetime.fromisoformat(current_next_date) + timedelta(days=1)
             ).isoformat()
 
             # Update DynamoDB record
             table.update_item(
-                Key={"email": email},
+                Key={"email": message["email"]},
                 UpdateExpression="SET next_email_date = :next_date",
                 ExpressionAttributeValues={":next_date": next_date},
             )
-            print(f"Updated next_email_date for {email} to {next_date}")
+            print(f"Updated next_email_date for {message["email"]} to {next_date}")
 
         return {
             "statusCode": 200,
