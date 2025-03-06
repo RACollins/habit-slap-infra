@@ -58,6 +58,11 @@ def generate_email(
     intensity: int,
 ) -> Email:
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    # Convert string inputs to integers if they aren't already
+    formality = int(formality)
+    assertiveness = int(assertiveness)
+    intensity = int(intensity)
+    
     formality_level = get_formality_level(formality)
     assertiveness_level = get_assertiveness_level(assertiveness)
     intensity_level = get_intensity_level(intensity)
