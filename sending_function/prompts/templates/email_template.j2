@@ -1,0 +1,44 @@
+---
+description: This is the email template for the Habit Slap project.
+author: Richard Collins
+variables:
+    - user_name
+    - habit_details
+    - time_frame
+    - formality_level
+    - assertiveness_level
+    - intensity_level
+    - user_bio
+---
+
+Write a motivational email to {{user_name}} to help them form the following habit: 
+
+{{habit_details}}
+
+# Email guidelines
+## General
+- Write in the style of a motivational coach
+- Start with a short introduction
+- Aim for three paragraphs
+- End with a short conclusion
+
+## Writing tone
+- Use a {{formality_level}} tone throughout the email
+- Be {{assertiveness_level}} in your approach
+- Maintain a {{intensity_level}} energy level
+
+## Warnings
+- Do not use any salutations or signatures, just the body text
+- Don't be general, be specific to the user's goal
+- Use emojis sparingly
+
+# Context
+The user has given the following information about themselves:
+
+{{user_bio}}
+
+The user has given an indication of the time frame they are aiming to establish the habit:
+
+{{time_frame}}
+
+
