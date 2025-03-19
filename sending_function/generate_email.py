@@ -15,57 +15,14 @@ class Email(BaseModel):
     body: str = Field(description="The body of the email")
 
 
-def get_formality_level(formality: int) -> str:
-    if formality < 25:
-        return "very friendly and casual"
-    elif formality < 50:
-        return "somewhat friendly"
-    elif formality < 75:
-        return "professional but approachable"
-    else:
-        return "formal and professional"
-
-
-def get_assertiveness_level(assertiveness: int) -> str:
-    if assertiveness < 25:
-        return "gentle and encouraging"
-    elif assertiveness < 50:
-        return "moderately assertive"
-    elif assertiveness < 75:
-        return "firm and direct"
-    else:
-        return "very assertive and challenging"
-
-
-def get_intensity_level(intensity: int) -> str:
-    if intensity < 25:
-        return "calm and measured"
-    elif intensity < 50:
-        return "moderately energetic"
-    elif intensity < 75:
-        return "highly energetic and passionate"
-    else:
-        return "extremely intense and powerful"
-
-
 def generate_email(
     user_name: str,
     user_bio: str,
     habit_details: str,
-    time_frame: str,
-    formality: int,
-    assertiveness: int,
-    intensity: int,
+    action_plan: str,
+    obstacles: str,
 ) -> Email:
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    # Convert string inputs to integers if they aren't already
-    formality = int(formality)
-    assertiveness = int(assertiveness)
-    intensity = int(intensity)
-    
-    formality_level = get_formality_level(formality)
-    assertiveness_level = get_assertiveness_level(assertiveness)
-    intensity_level = get_intensity_level(intensity)
     GENERAL_SYSTEM_PROMPT = PromptManager.get_prompt(
         "general_system_template",
     )
@@ -74,10 +31,8 @@ def generate_email(
         user_name=user_name,
         user_bio=user_bio,
         habit_details=habit_details,
-        time_frame=time_frame,
-        formality_level=formality_level,
-        assertiveness_level=assertiveness_level,
-        intensity_level=intensity_level,
+        action_plan=action_plan,
+        obstacles=obstacles,
     )
     response = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
@@ -85,7 +40,7 @@ def generate_email(
             {"role": "system", "content": GENERAL_SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt},
         ],
-        temperature=0.7,
+        temperature=0.9,
         max_tokens=2000,
         response_format=Email,
     )
@@ -109,20 +64,16 @@ if __name__ == "__main__":
     user_name = "John Doe"
     user_bio = "I'm a 30-year-old software engineer who loves to code and play guitar. I'm also a bit of a foodie and love to cook."
     habit_details = "I just want to lose weight, fast, I'm so fat. Help me please!"
-    time_frame = "1 month"
-    formality = 90
-    assertiveness = 10
-    intensity = 10
+    action_plan = "I'm going to eat less and exercise more."
+    obstacles = "I'm too busy to exercise."
 
     email_address = "habitslaptest+user1@gmail.com"
     email_object = generate_email(
         user_name,
         user_bio,
         habit_details,
-        time_frame,
-        formality,
-        assertiveness,
-        intensity,
+        action_plan,
+        obstacles,
     )
     send_email(email_address, email_object.parsed)
     print(email_object.parsed)
