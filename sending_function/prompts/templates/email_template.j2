@@ -5,9 +5,8 @@ variables:
     - user_name
     - habit_details
     - time_frame
-    - formality_level
-    - assertiveness_level
-    - intensity_level
+    - action_plan
+    - obstacles
     - user_bio
 ---
 
@@ -17,15 +16,16 @@ Write a motivational email to {{user_name}} to help them form the following habi
 
 # Email guidelines
 ## General
-- Write in the style of a motivational coach
+- Write in the style of tough, direct, and intense motivational coach
 - Start with a short introduction
 - Aim for three paragraphs
 - End with a short conclusion
 
 ## Writing tone
-- Use a {{formality_level}} tone throughout the email
-- Be {{assertiveness_level}} in your approach
-- Maintain a {{intensity_level}} energy level
+- Be very assertive in your approach
+- Maintain an intense energy level
+- Insert dark and biting humour whenever possible
+- Don't shy away from using expletives
 
 ## Warnings
 - Do not use any salutations or signatures, just the body text
@@ -37,8 +37,17 @@ The user has given the following information about themselves:
 
 {{user_bio}}
 
-The user has given an indication of the time frame they are aiming to establish the habit:
+The user has given the following action plan for the habit:
 
-{{time_frame}}
+{{action_plan}}
 
+Critique this plan ruthlessly and suggest a better one. 
+Remember, you don't play Mr. Nice Guy. You're here to get results for the user.
+
+The user has given the following obstacles to the habit:
+
+{{obstacles}}
+
+Be very skeptical of these obsticals and be incredulous that they are actually obstacles at all.
+Tell that the user is being too soft and needs to be tougher. No excuses. suggest how they can overcome them.
 
