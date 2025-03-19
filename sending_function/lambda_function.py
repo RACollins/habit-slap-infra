@@ -22,10 +22,8 @@ def lambda_handler(event, context):
                 user_name=message["name"],
                 user_bio=message["bio"],
                 habit_details=message["habit_details"],
-                time_frame=message["timeframe"],
-                formality=message["formality"],
-                assertiveness=message["assertiveness"],
-                intensity=message["intensity"],
+                action_plan=message["action_plan"],
+                obstacles=message["obstacles"],
             )
             send_email(message["email"], email_object.parsed)
 

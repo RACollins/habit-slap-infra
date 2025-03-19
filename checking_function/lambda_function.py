@@ -28,10 +28,8 @@ def lambda_handler(event, context):
             "name": record.get("name"),
             "bio": record.get("bio"),
             "habit_details": record.get("habit_details"),
-            "timeframe": record.get("timeframe"),
-            "formality": record.get("formality", 50),  # Default to middle value if not set
-            "assertiveness": record.get("assertiveness", 50),
-            "intensity": record.get("intensity", 50)
+            "action_plan": record.get("action_plan"),
+            "obstacles": record.get("obstacles"),
         }
         sqs.send_message(QueueUrl=queue_url, MessageBody=str(message))
         print(f"Sent message to SQS for {record.get('email')}")
