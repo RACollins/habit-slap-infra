@@ -25,7 +25,7 @@ def lambda_handler(event, context):
                 action_plan=message["action_plan"],
                 obstacles=message["obstacles"],
             )
-            send_email(message["email"], email_object.parsed)
+            send_email(message["email"], email_object.data)
 
             # Get current record to find next_email_date
             current_record = table.get_item(Key={"email": message["email"]})
