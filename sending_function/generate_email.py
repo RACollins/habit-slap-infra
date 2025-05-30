@@ -1,5 +1,6 @@
 import os
 import yagmail  # type: ignore
+import time
 from pydantic import BaseModel, Field  # type: ignore
 from pydantic_ai import Agent  # type: ignore
 from pydantic_ai.models.openai import OpenAIModel  # type: ignore
@@ -67,7 +68,9 @@ if __name__ == "__main__":
     user_bio = "I'm a 30-year-old recruiter who loves to sew. I'm also a huge fan of the TV show Stranger Things."
     habit_details = "I hate my job and want to quit."
     action_plan = "I'm going to apply for a new job next week."
-    obstacles = "Most jobs I've applied to have been: low pay, no benefits, and no remote work."
+    obstacles = (
+        "Most jobs I've applied to have been: low pay, no benefits, and no remote work."
+    )
 
     email_address = "habitslaptest+user1@gmail.com"
     email_object = generate_email(
