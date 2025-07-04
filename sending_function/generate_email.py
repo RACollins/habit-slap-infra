@@ -41,7 +41,7 @@ def generate_email(
         model=model,
         result_type=Email,
         system_prompt=(GENERAL_SYSTEM_PROMPT),
-        tools=[duckduckgo_search_tool()],
+        # tools=[duckduckgo_search_tool()], <--- Removed because kept getting rate limited
     )
     response = agent.run_sync(
         user_prompt,
